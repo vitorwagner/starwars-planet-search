@@ -9,8 +9,8 @@ table, th, td {
 }
 
 caption {
-  font-weight: bold;
-  font-size: 2.5rem;
-  text-align: left;
   color: #333;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: left;
 }
