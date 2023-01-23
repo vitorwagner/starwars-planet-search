@@ -3,4 +3,6 @@ const fetchPlanets = async () => {
   return response.results.map(({ residents, ...item }) => item);
 };
 
+// https://stackoverflow.com/a/46839399
+
 export default fetchPlanets;

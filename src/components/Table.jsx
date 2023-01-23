@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import fetchPlanets from '../services/fetchPlanets';
 
 const headers = ['Name', 'Rotation Period', 'Orbital Period', 'Diameter', 'Climate',
@@ -5,21 +6,44 @@ const headers = ['Name', 'Rotation Period', 'Orbital Period', 'Diameter', 'Clima
   'URL'];
 
 function Table() {
+  const [planets, setPlanets] = useState([]);
+
   const getPlanets = async () => {
-    const planets = await fetchPlanets();
-    console.log(planets);
+    const planetsList = await fetchPlanets();
+    setPlanets(planetsList);
   };
 
   getPlanets();
 
+  const filterPlanet = () => true;
+
+  const filteredPlanets = planets.filter(filterPlanet);
+
   return (
     <div>
 
-      <div>
-        <tr>
-          {headers.map((header) => (<th key={ header }>{header}</th>))}
-        </tr>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            {headers.map((header) => (<th key={ header }>{header}</th>))}
+          </tr>
+        </thead>
+        <tbody>
+          {filteredPlanets.map((item) => (
+            <tr key={ item.id }>
+              {Object.values(item).map((val) => (
+                <td
+                  key={ val }
+                >
+                  {val}
+                </td>
+              ))}
+            </tr>
+          ))}
+
+        </tbody>
+
+      </table>
     </div>
 
   );
