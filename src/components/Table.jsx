@@ -5,12 +5,16 @@ const headers = ['Name', 'Rotation Period', 'Orbital Period', 'Diameter', 'Clima
   'Gravity', 'Terrain', 'Surface Water', 'Population', 'Films', 'Created', 'Edited',
   'URL'];
 
+const columns = ['population', 'orbital_period',
+  'diameter', 'rotation_period', 'surface_water'];
+
 function Table() {
   const [planets, setPlanets] = useState([]);
   const [nameQuery, setNameQuery] = useState('');
   const [filters, setFilters] = useState(['population', 'orbital_period',
     'diameter', 'rotation_period', 'surface_water']);
   const [activeFilters, setActiveFilters] = useState([]);
+  const [order, setOrder] = useState({});
 
   const getPlanets = async () => {
     const planetsList = await fetchPlanets();
@@ -70,7 +74,27 @@ function Table() {
     && (activeFilters[4] ? numericCheck(activeFilters[4], data) : true)
   );
 
-  const filteredPlanets = planets.filter(filterPlanet);
+  // https://www.tutorialspoint.com/sort-a-javascript-array-so-the-nan-values-always-end-up-at-the-bottom
+
+  const filteredPlanets = planets.filter(filterPlanet)
+    .sort((a) => {
+      const SORT_A_AFTER_B = 1;
+      const SORT_A_BEFORE_B = -1;
+      if (Number.isNaN(+a[order.column])) {
+        return SORT_A_AFTER_B;
+      }
+      return SORT_A_BEFORE_B;
+    })
+    .sort((a, b) => (order.order === 'ASC'
+      ? a[order.column] - b[order.column] : b[order.column] - a[order.column]));
+
+  const orderTable = (e) => {
+    e.preventDefault();
+    setOrder({
+      column: e.target.column.value,
+      order: e.target.order.value,
+    });
+  };
 
   return (
     <div>
@@ -111,6 +135,35 @@ function Table() {
       <button data-testid="button-remove-filters" onClick={ resetFilters }>
         Remove all filters
       </button>
+      <form onSubmit={ orderTable }>
+        <select name="column" data-testid="column-sort">
+          {columns.map((item) => <option key={ item }>{item}</option>)}
+        </select>
+
+        <label htmlFor="asc">
+          Ascendente
+          <input
+            type="radio"
+            name="order"
+            id="asc"
+            data-testid="column-sort-input-asc"
+            value="ASC"
+          />
+        </label>
+
+        <label htmlFor="desc">
+          Descendente
+          <input
+            type="radio"
+            name="order"
+            id="desc"
+            data-testid="column-sort-input-desc"
+            value="DESC"
+          />
+        </label>
+
+        <button type="submit" data-testid="column-sort-button">Ordenar</button>
+      </form>
       <table>
         <caption>Planets</caption>
         <thead>
@@ -121,9 +174,10 @@ function Table() {
         <tbody>
           {filteredPlanets.map((item) => (
             <tr key={ item.name }>
-              {Object.values(item).map((val) => (
+              {Object.values(item).map((val, index) => (
                 <td
                   key={ val }
+                  data-testid={ index === 0 ? 'planet-name' : '' }
                 >
                   {val}
                 </td>
