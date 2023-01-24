@@ -32,6 +32,11 @@ function Table() {
     !== e.target.column.value));
   };
 
+  const removeFilter = (e) => {
+    setActiveFilters(activeFilters.filter((filter) => filter.column !== e.target.name));
+    setFilters([...filters, e.target.name]);
+  };
+
   // https://www.freecodecamp.org/news/how-to-convert-a-string-to-a-number-in-javascript/
 
   const numericCheck = ({ check, value, column }, data) => {
@@ -46,6 +51,12 @@ function Table() {
     default:
       return true;
     }
+  };
+
+  const resetFilters = () => {
+    setFilters(['population', 'orbital_period',
+      'diameter', 'rotation_period', 'surface_water']);
+    setActiveFilters([]);
   };
 
   // https://stackoverflow.com/questions/57358605/multiple-filters-in-react
@@ -89,13 +100,17 @@ function Table() {
       </form>
       <div>
         {activeFilters.map((filter) => (
-          <div key={ filter.column }>
+          <div key={ filter.column } data-testid="filter">
             <span>{filter.column}</span>
             <span>{filter.check}</span>
             <span>{filter.value}</span>
+            <button name={ filter.column } onClick={ removeFilter }>X</button>
           </div>
         ))}
       </div>
+      <button data-testid="button-remove-filters" onClick={ resetFilters }>
+        Remove all filters
+      </button>
       <table>
         <caption>Planets</caption>
         <thead>
