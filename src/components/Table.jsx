@@ -25,15 +25,18 @@ function Table() {
     getPlanets();
   }, []);
 
+  // Usar o e.target.elements para os testes: https://stackoverflow.com/a/61537739
+
   const addFilter = (e) => {
     e.preventDefault();
+    const { check, value, column } = e.target.elements;
     setActiveFilters((prevState) => [...prevState, {
-      check: e.target.check.value,
-      value: e.target.value.value,
-      column: e.target.column.value,
+      check: check.value,
+      value: value.value,
+      column: column.value,
     }]);
-    setFilters((prevState) => prevState.filter((column) => column
-    !== e.target.column.value));
+    setFilters((prevState) => prevState.filter((columnItem) => columnItem
+    !== column.value));
   };
 
   const removeFilter = (e) => {
@@ -88,11 +91,14 @@ function Table() {
     .sort((a, b) => (order.order === 'ASC'
       ? a[order.column] - b[order.column] : b[order.column] - a[order.column]));
 
+  // Usar o e.target.elements para os testes: https://stackoverflow.com/a/61537739
+
   const orderTable = (e) => {
     e.preventDefault();
+    const { column, sortOrder } = e.target.elements;
     setOrder({
-      column: e.target.column.value,
-      order: e.target.order.value,
+      column: column.value,
+      order: sortOrder.value,
     });
   };
 
@@ -144,7 +150,7 @@ function Table() {
           Ascendente
           <input
             type="radio"
-            name="order"
+            name="sortOrder"
             id="asc"
             data-testid="column-sort-input-asc"
             value="ASC"
@@ -155,7 +161,7 @@ function Table() {
           Descendente
           <input
             type="radio"
-            name="order"
+            name="sortOrder"
             id="desc"
             data-testid="column-sort-input-desc"
             value="DESC"

@@ -3,13 +3,21 @@ import { render, screen, waitFor } from '@testing-library/react';
 import App from '../App';
 import userEvent from '@testing-library/user-event';
 import responseData from './mocks/apiData';
+import { act } from 'react-dom/test-utils';
 
 const ASC = [  
-  'Coruscant', 'Naboo',
-  'Alderaan',   'Kamino',
-  'Endor',   'Bespin',
-  'Tatooine',    'Yavin IV',
+  'Yavin IV', 'Tatooine',
+  'Bespin',   'Endor',
+  'Kamino',   'Alderaan',
+  'Naboo',    'Coruscant',
   'Hoth',     'Dagobah'
+];
+
+const FILTERED = [  
+  'Tatooine', 'Alderaan',
+  'Yavin IV',   'Bespin',
+  'Endor',   'Naboo',
+  'Coruscant',    'Kamino',
 ];
 
 beforeEach(() => {
@@ -48,6 +56,7 @@ describe('Testa o aplicativo', () => {
   test('Teste se a ordenação da tabela funciona', async () => {
     render(<App />);
 
+
     const columnSort = screen.getByTestId('column-sort');
     const buttonOrder = screen.getByTestId('column-sort-button');
     const inputDesc = screen.getByTestId('column-sort-input-desc');
@@ -59,13 +68,78 @@ describe('Testa o aplicativo', () => {
     const planet = await screen.findByText(/naboo/i, {}, {timeout: 5000})
     expect(planet).toBeInTheDocument()
 
-    // userEvent.selectOptions(columnSort, 'population');
-    // userEvent.click(inputDesc);
-    // userEvent.click(buttonOrder);
+    userEvent.selectOptions(columnSort, 'population');
+    act(() => {
+      userEvent.click(buttonOrder);
+    });
 
-    // const planetNames = screen.getAllByTestId('planet-name');
-    // planetNames.forEach((names, index) => {
-    //   expect(names.innerHTML).toBe(ASC[index]);
-    // })
+    const planetNames = screen.getAllByTestId('planet-name');
+    planetNames.forEach((names, index) => {
+      expect(names.innerHTML).toBe(ASC[index]);
+    })
+  });
+
+  test('Teste se os filtros funcionam', async () => {
+    render(<App />);
+    const planet1 = await screen.findByText(/naboo/i, {}, {timeout: 5000})
+    expect(planet1).toBeInTheDocument()
+
+
+    const buttonFilter = screen.getByTestId('button-filter');
+    const comparisonFilter = screen.getByTestId('comparison-filter');
+    const resetFilter = screen.getByTestId('button-remove-filters');
+
+
+    act(() => {
+      comparisonFilter.value = 'maior que';
+      comparisonFilter.dispatchEvent(new Event('change'));
+      userEvent.click(buttonFilter);
+    });
+
+    const planetNames = screen.getAllByTestId('planet-name');
+    planetNames.forEach((names, index) => {
+      expect(names.innerHTML).toBe(FILTERED[index]);
+    })
+
+    const removeBtn = screen.getByRole('button', {  name: /x/i});
+    const planet = screen.queryByText(/hoth/i)
+    expect(planet).not.toBeInTheDocument()
+
+    act(() => {
+      userEvent.click(removeBtn);
+      userEvent.click(buttonFilter);
+      userEvent.click(buttonFilter);
+      userEvent.click(buttonFilter);
+      userEvent.click(buttonFilter);
+      userEvent.click(buttonFilter);
+      
+    })
+
+    const planetNames2 = screen.getAllByTestId('planet-name');
+    expect(planetNames2.length).toBe(10);
+
+    act(() => userEvent.click(resetFilter))
+
+    act(() => {
+      comparisonFilter.value = 'maior que';
+      comparisonFilter.dispatchEvent(new Event('change'));
+      userEvent.click(buttonFilter);
+    });
+
+    act(() => {
+      comparisonFilter.value = 'menor que';
+      comparisonFilter.dispatchEvent(new Event('change'));
+      userEvent.click(buttonFilter);
+    });
+
+    act(() => {
+      userEvent.click(resetFilter);
+    })
+
+    act(() => {
+      comparisonFilter.value = 'igual a';
+      comparisonFilter.dispatchEvent(new Event('change'));
+      userEvent.click(buttonFilter);
+    });
   });
 });
