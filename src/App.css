@@ -10,7 +10,27 @@ table, th, td {
 
 caption {
   color: #333;
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 700;
   text-align: left;
+}
+
+form {
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+.filter-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.filter-container > * {
+  margin: 0.5rem;
 }

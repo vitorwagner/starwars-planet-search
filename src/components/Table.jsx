@@ -104,31 +104,33 @@ function Table() {
 
   return (
     <div>
-      <input
-        value={ nameQuery }
-        onChange={ (e) => setNameQuery(e.target.value) }
-        type="search"
-        data-testid="name-filter"
-      />
-      <form onSubmit={ addFilter }>
-        <select name="column" id="" data-testid="column-filter">
-          {filters.map((item) => <option key={ item }>{item}</option>)}
-        </select>
-        <select name="check" id="" data-testid="comparison-filter">
-          <option value="maior que">maior que</option>
-          <option value="menor que">menor que</option>
-          <option value="igual a">igual a</option>
-        </select>
+      <h1>Star Wars Planet Search</h1>
+      <div className="filter-container">
         <input
-          type="number"
-          name="value"
-          id=""
-          data-testid="value-filter"
-          defaultValue={ 0 }
+          value={ nameQuery }
+          onChange={ (e) => setNameQuery(e.target.value) }
+          type="search"
+          data-testid="name-filter"
         />
-        <button type="submit" data-testid="button-filter">Adicionar Filtro</button>
-      </form>
-      <div>
+        <form onSubmit={ addFilter }>
+          <select name="column" id="" data-testid="column-filter">
+            {filters.map((item) => <option key={ item }>{item}</option>)}
+          </select>
+          <select name="check" id="" data-testid="comparison-filter">
+            <option value="maior que">maior que</option>
+            <option value="menor que">menor que</option>
+            <option value="igual a">igual a</option>
+          </select>
+          <input
+            type="number"
+            name="value"
+            id=""
+            data-testid="value-filter"
+            defaultValue={ 0 }
+          />
+          <button type="submit" data-testid="button-filter">Adicionar Filtro</button>
+        </form>
+
         {activeFilters.map((filter) => (
           <div key={ filter.column } data-testid="filter">
             <span>{filter.column}</span>
@@ -137,39 +139,37 @@ function Table() {
             <button name={ filter.column } onClick={ removeFilter }>X</button>
           </div>
         ))}
+
+        <button data-testid="button-remove-filters" onClick={ resetFilters }>
+          Remove all filters
+        </button>
+        <form onSubmit={ orderTable }>
+          <select name="column" data-testid="column-sort">
+            {columns.map((item) => <option key={ item }>{item}</option>)}
+          </select>
+          <label htmlFor="asc">
+            Ascendente
+            <input
+              type="radio"
+              name="sortOrder"
+              id="asc"
+              data-testid="column-sort-input-asc"
+              value="ASC"
+            />
+          </label>
+          <label htmlFor="desc">
+            Descendente
+            <input
+              type="radio"
+              name="sortOrder"
+              id="desc"
+              data-testid="column-sort-input-desc"
+              value="DESC"
+            />
+          </label>
+          <button type="submit" data-testid="column-sort-button">Ordenar</button>
+        </form>
       </div>
-      <button data-testid="button-remove-filters" onClick={ resetFilters }>
-        Remove all filters
-      </button>
-      <form onSubmit={ orderTable }>
-        <select name="column" data-testid="column-sort">
-          {columns.map((item) => <option key={ item }>{item}</option>)}
-        </select>
-
-        <label htmlFor="asc">
-          Ascendente
-          <input
-            type="radio"
-            name="sortOrder"
-            id="asc"
-            data-testid="column-sort-input-asc"
-            value="ASC"
-          />
-        </label>
-
-        <label htmlFor="desc">
-          Descendente
-          <input
-            type="radio"
-            name="sortOrder"
-            id="desc"
-            data-testid="column-sort-input-desc"
-            value="DESC"
-          />
-        </label>
-
-        <button type="submit" data-testid="column-sort-button">Ordenar</button>
-      </form>
       <table>
         <caption>Planets</caption>
         <thead>
