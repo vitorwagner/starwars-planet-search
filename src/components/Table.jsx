@@ -70,11 +70,7 @@ function Table() {
 
   const filterPlanet = (data) => (data.name.toLowerCase()
     .includes(nameQuery.toLowerCase())
-    && (activeFilters[0] ? numericCheck(activeFilters[0], data) : true)
-    && (activeFilters[1] ? numericCheck(activeFilters[1], data) : true)
-    && (activeFilters[2] ? numericCheck(activeFilters[2], data) : true)
-    && (activeFilters[3] ? numericCheck(activeFilters[3], data) : true)
-    && (activeFilters[4] ? numericCheck(activeFilters[4], data) : true)
+    && (activeFilters.every((filter) => numericCheck(filter, data)))
   );
 
   // https://www.tutorialspoint.com/sort-a-javascript-array-so-the-nan-values-always-end-up-at-the-bottom
@@ -128,7 +124,13 @@ function Table() {
             data-testid="value-filter"
             defaultValue={ 0 }
           />
-          <button type="submit" data-testid="button-filter">Adicionar Filtro</button>
+          <button
+            type="submit"
+            data-testid="button-filter"
+            disabled={ filters.length === 0 }
+          >
+            Adicionar Filtro
+          </button>
         </form>
 
         {activeFilters.map((filter) => (
